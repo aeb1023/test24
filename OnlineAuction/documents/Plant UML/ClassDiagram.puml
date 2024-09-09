@@ -1,0 +1,121 @@
+@startuml
+
+package "Controllers" {
+    class AdminController {
+        - passwordEncoder: PasswordEncoder
+        - userRepository: UserRepository
+        - advisorRepository: AdvisorRepository
+        - userRoleRepository: UserRoleRepository
+        - sdf: SimpleDateFormat
+        - uploadMessages: List<String>
+        + AdminController(advisorRepository: AdvisorRepository, userRoleRepository: UserRoleRepository)
+        + viewUsers(model: Model): String
+        + showSystemSettings(model: Model): String
+        + showUploadForm(model: Model): String
+        + uploadAdvisors(file: MultipartFile, redirectAttributes: RedirectAttributes): String
+        + showAddAdvisorForm(model: Model): String
+        + addAdvisor(advisorData: AdvisorData, redirectAttributes: RedirectAttributes): String
+        + showEditForm(id: Long, model: Model): String
+        + updateAdvisor(id: Long, updatedAdvisor: AdvisorData, redirectAttributes: RedirectAttributes): String
+        + deleteAdvisor(id: Long, redirectAttributes: RedirectAttributes): String
+        - readAdvisorsFromFile(file: MultipartFile): List<AdvisorData>
+    }
+
+    class FacultyController {
+        - userRepository: UserRepository
+        - passwordEncoder: PasswordEncoder
+        + facultyDashboard(model: Model): String
+    }
+
+    class StudentController {
+        - userRepository: UserRepository
+        - passwordEncoder: PasswordEncoder
+        + studentDashboard(model: Model): String
+        + viewMeetingsStudent(model: Model): String
+    }
+
+    class AdminSettingsController {
+        - settingsService: AdminSettingsService
+        + AdminSettingsController(settingsService: AdminSettingsService)
+        + showSettings(model: Model): String
+        + updateSettings(formSettings: AdminSettings, redirectAttributes: RedirectAttributes): String
+    }
+
+    class EmailController {
+        - port: String
+        - email: String
+        - password: String
+        - mailHost: String
+        - mailPort: int
+        - servletContext: ServletContext
+        + getJavaMailSender(): JavaMailSender
+        + sendTwoFactorAuthEmail(user: User, code: String): void
+        + verificationEmail(recipient: User, code: String): void
+        + usernameRecovery(user: User): void
+    }
+
+    class IndexController {
+        - userRepository: UserRepository
+        - twoFactorAuth: TwoFactorAuthentication
+        + showUserList(model: Model): String
+        + showIndex(model: Model): String
+        + showLoginPage(): String
+        + showMission(): String
+        + showFAQ(): String
+        + verify2FA(code: String, request: HttpServletRequest): String
+        + showVerify2FAPage(): String
+    }
+
+    class UserController {
+        - userRepository: UserRepository
+        - util: UtilityController
+        - entityManager: EntityManager
+        + UserController(userRepository: UserRepository, util: UtilityController)
+        + getUser(id: long, model: Model): User
+        + getUserByUsername(name: String): User
+        + getUserByEmail(email: String): User
+        + getAllUsers(): Iterable<User>
+        + addUser(user: User, result: BindingResult): User
+        + editUser(user: User, oldPass: String): User
+        + updateUser(id: long, returnPath: String, user: User, result: BindingResult, model: Model): void
+        + deleteUser(id: long, model: Model): void
+        + getCaptcha(user: User): void
+    }
+}
+
+AdminController --> UserRepository
+AdminController --> AdvisorRepository
+AdminController --> UserRoleRepository
+AdminController --> PasswordEncoder
+AdminController --> Model
+AdminController --> MultipartFile
+AdminController --> RedirectAttributes
+
+FacultyController --> UserRepository
+FacultyController --> PasswordEncoder
+FacultyController --> Model
+
+StudentController --> UserRepository
+StudentController --> PasswordEncoder
+StudentController --> Model
+
+AdminSettingsController --> AdminSettingsService
+AdminSettingsController --> Model
+AdminSettingsController --> RedirectAttributes
+
+EmailController --> JavaMailSender
+EmailController --> User
+EmailController --> ServletContext
+
+IndexController --> UserRepository
+IndexController --> TwoFactorAuthentication
+IndexController --> Model
+IndexController --> HttpServletRequest
+
+UserController --> UserRepository
+UserController --> UtilityController
+UserController --> EntityManager
+UserController --> Model
+UserController --> BindingResult
+
+@enduml

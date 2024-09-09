@@ -1,0 +1,49 @@
+@startuml
+
+actor User
+participant "Web Browser" as Browser
+participant "EmailController" as Controller
+participant "JavaMailSender" as MailSender
+participant "SimpleMailMessage" as MailMessage
+participant "User" as UserEntity
+participant "ServletContext" as Context
+participant "InetAddress" as IPAddress
+
+User -> Browser: Interacts with web page
+Browser -> Controller: Requests email functionalities
+Controller -> Browser: Renders email functionalities
+Browser -> Controller: Requests send email to list page
+Controller -> MailSender: sendEmailToList(recipients, subject, body)
+MailSender -> MailMessage: create message
+MailMessage --> recipients: setTo(recipient)
+MailMessage --> subject: setSubject(subject)
+MailMessage --> body: setText(body)
+MailSender --> recipients: send(message)
+Controller -> Browser: Renders success message
+
+Browser -> Controller: Requests appointment confirmation email page
+Controller -> MailSender: sendAppointmentConfirmationEmail(email, appointmentDetails)
+MailSender -> MailMessage: create message
+MailMessage --> email: setTo(email)
+MailMessage --> "Appointment Confirmation": setSubject
+MailMessage --> appointmentDetails: setText
+MailSender --> email: send(message)
+Controller -> Browser: Renders success message
+
+Browser -> Controller: Requests two-factor authentication email page
+Controller -> MailSender: sendTwoFactorAuthEmail(user, code)
+MailSender -> MailMessage: create message
+MailMessage --> "Two Factor Authentication": setSubject
+MailMessage --> code: setText
+Controller -> Browser: Renders success message
+
+Browser -> Controller: Requests email verification page
+Controller -> Context: getContextPath()
+Context -> Controller: contextPath
+Controller -> UserEntity: setEmailVerification(code)
+IPAddress -> MailMessage: setText
+MailSender -> MailMessage: create message
+MailMessage --> "Welcome!": setSubject
+
+@enduml
+

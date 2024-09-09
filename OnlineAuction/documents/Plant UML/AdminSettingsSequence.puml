@@ -1,0 +1,27 @@
+@startuml
+
+actor Admin as A
+
+participant "AdminSettingsController" as Controller
+database "AdminSettingsService" as Service
+participant "AdminSettings" as Settings
+participant "RedirectAttributes" as RedirectAttributes
+participant "Model" as Model
+
+A -> Controller: Navigate to /admin/settings
+Controller -> Service: getSettings()
+Service --> Controller: Settings
+Controller -> Model: addAttribute("settings", settings)
+Controller --> A: Render adminSettings view
+
+A -> Controller: Update settings
+Controller -> Service: getSettings()
+Service --> Controller: Current settings
+Controller -> Controller: Update settings from form
+Controller -> Service: saveSettings(settings)
+Service -> Database: Update settings
+Database --> Service: Success
+Controller -> RedirectAttributes: addFlashAttribute("success", "Settings updated successfully.")
+Controller --> A: Redirect to /admin/settings
+
+@enduml

@@ -1,0 +1,32 @@
+@startuml
+start
+
+:User enters username and password;
+if (Credentials are valid?) then (yes)
+  :Authenticate user;
+  if (User is authenticated?) then (yes)
+    if (2FA is enabled?) then (yes)
+      :Send 2FA code;
+      :Redirect to Verify 2FA Page;
+    else (no)
+      if (User has ROLE_ADMIN?) then (yes)
+        :Redirect to Admin Dashboard;
+      elseif (User has ROLE_USER?) then (yes)
+        :Redirect to Student Dashboard;
+      elseif (User has ROLE_FACULTY?) then (yes)
+        :Redirect to Faculty Dashboard;
+      else
+        :Redirect to Home Page;
+      endif
+    endif
+  else (no)
+    :Display Authentication Error;
+    stop
+  endif
+else (no)
+  :Display Error Message;
+  stop
+endif
+
+stop
+@enduml

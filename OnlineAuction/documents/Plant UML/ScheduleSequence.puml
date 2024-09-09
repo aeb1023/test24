@@ -1,0 +1,45 @@
+@startuml
+
+actor User
+participant "ScheduleController" as Controller
+participant "UserService" as UserService
+participant "TimeService" as TimeService
+participant "ScheduleService" as ScheduleService
+participant "UserRepository" as UserRepository
+participant "TimeslotRepository" as TimeslotRepository
+participant "EmailController" as EmailController
+
+User -> Controller: Request /schedule
+Controller -> UserService: getUserByUsername(username)
+UserService -> UserRepository: findByUsername(username)
+UserService <-- UserRepository: User
+Controller -> TimeService: getTimeslotList()
+TimeService --> Controller: timeslotList
+Controller -> ScheduleService: getScheduleList()
+ScheduleService --> Controller: scheduleList
+Controller -> UserRepository: findByUsername(advisorEmail)
+UserRepository --> Controller: advisor
+Controller -> TimeslotRepository: findByAdvisorId(advisorId)
+TimeslotRepository --> Controller: timeslots
+Controller -> Model: addAttribute("roles", user.getUserRole().getAuthority())
+Controller -> Model: addAttribute("timeslots", timeslotList)
+Controller -> Model: addAttribute("schedules", scheduleList)
+Controller -> View: Render schedule view
+User <-- View: Display schedule
+
+User -> Controller: POST /select
+Controller -> UserService: getUserByUsername(username)
+UserService -> UserRepository: findByUsername(username)
+UserService <-- UserRepository: User
+Controller -> UserService: getAllUsers()
+UserService -> UserRepository: findAll()
+UserService <-- UserRepository: userList
+Controller -> UserService: getUserById(advisorId)
+UserService -> UserRepository: findById(advisorId)
+UserService <-- UserRepository: advisor
+Controller -> TimeService: getById(timeslotId)
+TimeService --> Controller: timeslot
+Controller -> EmailController: sendAppointmentConfirmationEmail(email, appointmentDetails)
+EmailController -> JavaMailSender: send(message)
+
+@enduml

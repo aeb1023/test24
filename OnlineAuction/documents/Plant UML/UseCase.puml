@@ -1,0 +1,29 @@
+@startuml
+
+
+:Admin: as Admin
+:Faculty: as Faculty
+:Student: as Student
+
+
+rectangle  {
+    Admin --> (Login)
+    Admin --> (Logout)
+    Admin --> (Upload Faculty)
+    Admin --> (Edit Faculty)
+    Admin --> (Delete Faculty)
+    
+    Faculty --> (Login)
+    Faculty --> (Logout)
+    Faculty --> (Upload Students)
+    Faculty --> (Edit Students)
+    Faculty --> (Delete Students)
+    Faculty --> (Upload Schedule)
+    Faculty --> (Edit Schedule)
+    
+    Student --> (Login) 
+    Student --> (Logout) 
+    Student --> (Select Timeslot) 
+}
+
+@enduml

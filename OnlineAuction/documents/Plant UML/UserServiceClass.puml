@@ -1,0 +1,41 @@
+@startuml
+
+class UserService {
+    -userRepository: UserRepository
+
+    +UserService(userRepository: UserRepository)
+    +updateUserProfile(userId: Long, user: User): User
+    +addUser(user: User): User
+    +deleteUser(userId: Long): void
+    +getUserById(userId: Long): User
+    +getUserByUsername(username: String): User
+    +getAllUsers(): List<User>
+    +searchUsers(query: String, filterType: String): List<User>
+}
+
+class UserRepository {
+    +findById(userId: Long): Optional<User>
+    +save(user: User): User
+    +existsById(userId: Long): boolean
+    +deleteById(userId: Long): void
+    +findByUsername(username: String): User
+    +findAll(): Iterable<User>
+}
+
+class User {
+    -userId: Long
+    -username: String
+    -email: String
+    -userRole: UserRole
+
+}
+
+class UserRole {
+    -authority: String
+}
+
+UserService --> UserRepository: userRepository
+UserService "1" --> "*" User: uses
+User -- UserRole: has-a
+
+@enduml
